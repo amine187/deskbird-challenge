@@ -1,0 +1,72 @@
+[
+  {
+    "email": "admin@deskbird.com",
+    "password": "admin123",
+    "role": "admin",
+    "firstName": "Admin",
+    "lastName": "User"
+  },
+  {
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  {
+    "email": "jane.smith@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Jane",
+    "lastName": "Smith"
+  },
+  {
+    "email": "michael.brown@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Michael",
+    "lastName": "Brown"
+  },
+  {
+    "email": "emily.jones@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Emily",
+    "lastName": "Jones"
+  },
+  {
+    "email": "daniel.wilson@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Daniel",
+    "lastName": "Wilson"
+  },
+  {
+    "email": "sophia.miller@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Sophia",
+    "lastName": "Miller"
+  },
+  {
+    "email": "william.moore@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "William",
+    "lastName": "Moore"
+  },
+  {
+    "email": "olivia.taylor@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "Olivia",
+    "lastName": "Taylor"
+  },
+  {
+    "email": "james.anderson@example.com",
+    "password": "password123",
+    "role": "user",
+    "firstName": "James",
+    "lastName": "Anderson"
+  }
+]
