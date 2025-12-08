@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import bcrypt from 'bcrypt';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -19,8 +26,8 @@ export class User {
   @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column()
-  password: string;
+  @Column({ select: false, name: 'password_hash' })
+  passwordHash!: string;
 
   @Column({
     type: 'enum',
@@ -28,4 +35,19 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    console.log('DEBUG: Hashing hook is triggered ', this.password);
+    if (this.password) {
+      this.passwordHash = await bcrypt.hash(this.password, 10);
+    }
+  }
+
+  async comparePassword(attempt: string): Promise<boolean> {
+    return bcrypt.compare(attempt, this.passwordHash);
+  }
+
+  public password?: string;
 }

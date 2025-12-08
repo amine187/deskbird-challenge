@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
 import userData from '../data.json';
 
-const usersToSeed: User[] = userData as User[];
+const usersToSeed: Partial<User>[] = userData as Partial<User>[];
 
 export default class UserSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<void> {
@@ -13,30 +13,38 @@ export default class UserSeeder implements Seeder {
       `\n Starting JSON seed for Users (${userData.length} records found)`,
     );
 
-    const uniqueUsers: User[] = [];
+    const usersToSave: User[] = [];
     const emails = new Set<string>();
 
-    for (const user of usersToSeed) {
-      if (!emails.has(user.email)) {
-        emails.add(user.email);
-        uniqueUsers.push(user);
+    for (const data of usersToSeed) {
+      if (!emails.has(data.email!) && data.email) {
+        emails.add(data.email);
+
+        const user = new User();
+        user.email = data.email;
+        user.firstName = data.firstName!;
+        user.lastName = data.lastName!;
+        user.role = data.role!;
+        user.password = data.password!;
+
+        usersToSave.push(user);
       } else {
         console.warn(
-          `⚠️ Warning: Duplicate email found and skipped: ${user.email}`,
+          `⚠️ Warning: Duplicate email found and skipped: ${data.email}`,
         );
       }
     }
 
-    if (uniqueUsers.length === 0) {
+    if (usersToSave.length === 0) {
       console.log(`🔴 No unique users to seed. Skipping insertion`);
       return;
     }
 
     try {
-      await userRepository.insert(uniqueUsers);
+      await userRepository.save(usersToSave, { chunk: 50 });
 
       console.log(
-        `✅ Successfully seeded ${uniqueUsers.length} unique users from JSON file.`,
+        `✅ Successfully seeded ${usersToSave.length} unique users from JSON file.`,
       );
     } catch (error) {
       console.log(`❌ Failed to seed users from JSON. Database error`, error);
