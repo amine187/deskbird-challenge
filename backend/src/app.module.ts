@@ -2,17 +2,28 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeormConfig } from './config/typeorm.config';
-import { ConfigModule } from '@nestjs/config';
+import { baseTypeOrmOptions } from './config/orm.config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     ConfigModule.forRoot({
-      isGlobal: true,
       envFilePath: '.env',
+      isGlobal: true,
+      ignoreEnvFile: false,
     }),
-    TypeOrmModule.forRoot(typeormConfig),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          ...baseTypeOrmOptions,
+          logging:
+            config.get('LOG_LEVEL') === 'debug'
+              ? true
+              : baseTypeOrmOptions.logging,
+        };
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
