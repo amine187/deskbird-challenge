@@ -28,14 +28,14 @@ describe(`Controller: ${UsersController.name}`, () => {
   it('should return all users', async () => {
     const mockUsers: UserResponseDto[] = [
       {
-        id: 10,
+        id: '00000000-0000-0000-0000-000000000000',
         email: 'john@example.com',
         firstName: 'john',
         lastName: 'white',
         role: 'admin',
       },
       {
-        id: 11,
+        id: '00000000-0000-0000-0000-000000000001',
         email: 'emily@example.com',
         firstName: 'emily',
         lastName: 'smith',
