@@ -1,7 +1,7 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthPayloadDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users';
+import { UsersService } from '../users/users.service';
 import { LoginResponseDto, ValidateUserResponseDto } from './dto/auth.dto';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  private async validateUser({
+  async validateUser({
     email,
     password,
   }: AuthPayloadDto): Promise<ValidateUserResponseDto | null> {
@@ -29,16 +29,11 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...result } = user;
+
     return result;
   }
 
-  async login(payload: AuthPayloadDto): Promise<LoginResponseDto> {
-    const user = await this.validateUser(payload);
-    if (!user) throw new HttpException('Invalid Credentials', 401);
-
-    return {
-      accessToken: this.jwtService.sign(payload),
-      user,
-    };
+  login(user: ValidateUserResponseDto): LoginResponseDto {
+    return { accessToken: this.jwtService.sign(user) };
   }
 }
