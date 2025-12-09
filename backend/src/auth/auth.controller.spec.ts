@@ -1,11 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { HttpException } from '@nestjs/common';
+import { ExecutionContext } from '@nestjs/common';
+import { ValidateUserResponseDto } from './dto';
+import { AuthGuard } from '@nestjs/passport';
+import type { Request } from 'express';
 
 describe(`Controller: ${AuthController.name}`, () => {
   let controller: AuthController;
   let mockAuthService: { login: jest.Mock };
+
+  const mockUser: ValidateUserResponseDto = {
+    id: '123',
+    email: 'test@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    role: 'USER',
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -17,36 +28,40 @@ describe(`Controller: ${AuthController.name}`, () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [{ provide: AuthService, useValue: mockAuthService }],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard('local'))
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const req = context.switchToHttp().getRequest();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          req.user = mockUser; // mock the user here
+          return true;
+        },
+      })
+      .compile();
 
     controller = module.get<AuthController>(AuthController);
   });
 
   describe('login', () => {
-    const payload = { email: 'john@example.com', password: 'secret123' };
+    const mockUser: ValidateUserResponseDto = {
+      id: '123',
+      email: 'test@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      role: 'USER',
+    };
 
-    it('should call authService.login with correct payload and return response', async () => {
-      const expectedResponse = {
-        accessToken: 'fake-jwt',
-        user: { id: '1', email: payload.email },
-      };
+    it('should call authService.login with mocked req.user', () => {
+      const loginResult = { accessToken: 'fake-token' };
+      mockAuthService.login.mockReturnValue(loginResult);
 
-      mockAuthService.login.mockResolvedValue(expectedResponse);
+      const req = { user: mockUser } as unknown as Request;
+      const result = controller.login(req);
 
-      const result = await controller.login(payload);
-
-      expect(mockAuthService.login).toHaveBeenCalledWith(payload);
-      expect(result).toEqual(expectedResponse);
-    });
-
-    it('should propagate errors thrown by authService.login', async () => {
-      mockAuthService.login.mockRejectedValue(
-        new HttpException('Invalid Credentials', 401),
-      );
-
-      await expect(controller.login(payload)).rejects.toThrow(
-        new HttpException('Invalid Credentials', 401),
-      );
+      expect(result).toEqual(loginResult);
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockUser);
     });
   });
 });
