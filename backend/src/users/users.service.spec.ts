@@ -2,16 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './users.entity';
+import { UpdateUserDto } from './dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe(`Service: ${UsersService.name}`, () => {
   let service: UsersService;
-  let mockUsersRepository: { find: jest.Mock };
+  let mockUsersRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    save: jest.Mock;
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
     mockUsersRepository = {
       find: jest.fn(),
+      findOne: jest.fn(),
+      save: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -68,5 +76,56 @@ describe(`Service: ${UsersService.name}`, () => {
         role: 'user',
       },
     ]);
+  });
+
+  describe('update', () => {
+    const userId = '00000000-0000-0000-0000-000000000000';
+
+    it('should update a user successfully', async () => {
+      const existingUser = {
+        id: userId,
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        role: 'user',
+      };
+      const updateDto: UpdateUserDto = {
+        firstName: 'Jane',
+        lastName: 'Smith',
+      };
+
+      mockUsersRepository.findOne.mockResolvedValue(existingUser);
+      mockUsersRepository.save.mockImplementation((user) =>
+        Promise.resolve({ ...user }),
+      );
+
+      const result = await service.update(userId, updateDto);
+
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(mockUsersRepository.save).toHaveBeenCalledWith({
+        ...existingUser,
+        ...updateDto,
+      });
+      expect(result).toEqual({
+        ...existingUser,
+        ...updateDto,
+      });
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      mockUsersRepository.findOne.mockResolvedValue(undefined);
+      const updateDto: UpdateUserDto = { firstName: 'Jane' };
+
+      await expect(service.update(userId, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+        where: { id: userId },
+      });
+      expect(mockUsersRepository.save).not.toHaveBeenCalled();
+    });
   });
 });
