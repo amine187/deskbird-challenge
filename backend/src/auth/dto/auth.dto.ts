@@ -13,5 +13,4 @@ export class ValidateUserResponseDto {
 
 export class LoginResponseDto {
   accessToken: string;
-  user: ValidateUserResponseDto;
 }
