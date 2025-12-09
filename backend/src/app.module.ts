@@ -4,26 +4,25 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { baseTypeOrmOptions } from './config/orm.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
       ignoreEnvFile: false,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        return {
-          ...baseTypeOrmOptions,
-          logging:
-            config.get('LOG_LEVEL') === 'debug'
-              ? true
-              : baseTypeOrmOptions.logging,
-        };
-      },
+      useFactory: (config: ConfigService) => ({
+        ...baseTypeOrmOptions,
+        logging:
+          config.get('LOG_LEVEL') === 'debug'
+            ? true
+            : baseTypeOrmOptions.logging,
+      }),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
