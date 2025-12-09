@@ -1,1 +1,5 @@
-export { AuthPayloadDto } from './auth.dto';
+export {
+  AuthPayloadDto,
+  LoginResponseDto,
+  ValidateUserResponseDto,
+} from './auth.dto';
