@@ -1,6 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserResponseDto } from './dto';
+import { UpdateUserDto, UserResponseDto } from './dto';
 
 @Controller('users')
 export class UsersController {
@@ -8,6 +16,15 @@ export class UsersController {
 
   @Get()
   async findAll(): Promise<UserResponseDto[]> {
-    return this.usersService.findAll();
+    return await this.usersService.findAll();
+  }
+
+  @Patch(':id')
+  @HttpCode(200)
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    return await this.usersService.update(id, updateUserDto);
   }
 }
