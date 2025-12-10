@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto, UserResponseDto } from './dto';
-import { JwtAuthGuard } from '../auth/guards';
+import { JwtAuthGuard, RolesGuard } from '../auth/guards';
+import { Roles } from '../auth/decorators';
+import { UserRole } from './users.entity';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -24,6 +26,8 @@ export class UsersController {
 
   @Patch(':id')
   @HttpCode(200)
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
