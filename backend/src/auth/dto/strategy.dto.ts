@@ -11,4 +11,5 @@ export class ValidateJwtStrategyPayloadDto {
 export class ValidateJwtStrategyResponseDto {
   id!: string;
   email!: string;
+  role!: string;
 }
