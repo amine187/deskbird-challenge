@@ -5,6 +5,7 @@ import {
   ValidateJwtStrategyPayloadDto,
   ValidateJwtStrategyResponseDto,
 } from '../dto';
+import { UserRole } from '../../users/users.entity';
 
 describe('Strategy: JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
@@ -25,11 +26,13 @@ describe('Strategy: JwtStrategy', () => {
     const payload: ValidateJwtStrategyPayloadDto = {
       id: '123',
       email: 'test@example.com',
+      role: UserRole.USER,
     } as ValidateJwtStrategyPayloadDto;
 
     const expected: ValidateJwtStrategyResponseDto = {
       id: '123',
       email: 'test@example.com',
+      role: UserRole.USER,
     };
 
     const result = jwtStrategy.validate(payload);
