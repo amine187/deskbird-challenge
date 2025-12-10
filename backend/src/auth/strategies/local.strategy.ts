@@ -7,7 +7,6 @@ import { ValidateUserResponseDto } from '../dto/auth.dto';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
       usernameField: 'email',
     });
