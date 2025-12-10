@@ -1,14 +1,24 @@
-FROM node:20-alpine
-
+# Stage 1: build
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-RUN corepack enable pnpm
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
 RUN pnpm install
 
 COPY . .
-
 RUN pnpm run build
 
+# Stage 2: production
+FROM node:20-alpine
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
+RUN pnpm install --prod
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
 EXPOSE 3000
-CMD ["pnpm", "run", "start:prod"]
+CMD ["node", "dist/main.js"]
