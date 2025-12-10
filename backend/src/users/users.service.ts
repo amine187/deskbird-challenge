@@ -35,4 +35,26 @@ export class UsersService {
 
     return this.mapUserToResponseDto(updated);
   }
+
+  async findByEmail(
+    email: string,
+    withHashPassword: boolean = false,
+  ): Promise<User | null> {
+    const selectedFields: (keyof User)[] = [
+      'id',
+      'email',
+      'firstName',
+      'lastName',
+      'role',
+    ];
+
+    if (withHashPassword) {
+      selectedFields.push('passwordHash');
+    }
+
+    return await this.usersRepository.findOne({
+      where: { email },
+      select: selectedFields,
+    });
+  }
 }

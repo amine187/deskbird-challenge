@@ -128,4 +128,55 @@ describe(`Service: ${UsersService.name}`, () => {
       expect(mockUsersRepository.save).not.toHaveBeenCalled();
     });
   });
+
+  describe('findByEmail', () => {
+    it.each([
+      {
+        withHash: false,
+        expectedSelect: ['id', 'email', 'firstName', 'lastName', 'role'],
+        returnedUser: {
+          id: 'uuid-1',
+          email: 'john@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          role: 'user',
+        },
+      },
+      {
+        withHash: true,
+        expectedSelect: [
+          'id',
+          'email',
+          'firstName',
+          'lastName',
+          'role',
+          'passwordHash',
+        ],
+        returnedUser: {
+          id: 'uuid-1',
+          email: 'john@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          role: 'user',
+          passwordHash: 'hashed-pass',
+        },
+      },
+    ])(
+      'should call repository correctly (withHashPassword = $withHash)',
+      async ({ withHash, expectedSelect, returnedUser }) => {
+        const email = 'john@example.com';
+
+        mockUsersRepository.findOne.mockResolvedValue(returnedUser);
+
+        const result = await service.findByEmail(email, withHash);
+
+        expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+          where: { email },
+          select: expectedSelect,
+        });
+
+        expect(result).toEqual(returnedUser);
+      },
+    );
+  });
 });
