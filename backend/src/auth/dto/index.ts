@@ -4,6 +4,7 @@ export {
   ValidateUserResponseDto,
 } from './auth.dto';
 export {
-  ValidateJwtStrategyPayloadDto,
   ValidateJwtStrategyResponseDto,
+  ValidateJwtStrategyPayloadDto,
 } from './strategy.dto';
+export { ValidatedUserDto } from './guard.dto';
