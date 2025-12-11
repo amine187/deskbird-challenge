@@ -2,6 +2,9 @@
 
 This project consists of a NestJS backend, an Angular frontend, and a PostgreSQL database managed via Docker Compose.
 
+**🔗 Live Application:** The frontend application is deployed and available here:
+[https://frontend-proud-moon-5284.fly.dev](https://frontend-proud-moon-5284.fly.dev)
+
 ## 📋 Project Structure
 
 The project uses a mono-repository structure:
@@ -35,7 +38,10 @@ The backend requires the PostgreSQL database to be running.
     cp .env.example .env
     ```
 
-2.  **Configure `.env`:** Open the new **`.env`** file and update the variables (especially `POSTGRES_DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`) with your desired credentials.
+2.  **Configure `.env`:** Open the new **`.env`** file. You must set the database credentials.
+
+      * **Backend Application:** Reads the full connection string from `POSTGRES_DB_URL`.
+      * **Docker Container:** Requires individual variables (e.g., `POSTGRES_USER`, `POSTGRES_PASSWORD`) to initialize the database user/schema.
 
 ### 2\. Database and Services Startup
 
