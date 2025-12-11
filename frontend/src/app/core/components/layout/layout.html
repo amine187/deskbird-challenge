@@ -1,0 +1,45 @@
+<p-toolbar class="p-2 border-x-0 border-b-1 rounded-none">
+  <ng-template #start>
+    <div class="flex items-center gap-2">
+      <img src="/images/logo.svg" alt="Logo" class="h-5" />
+    </div>
+  </ng-template>
+
+  <ng-template #end>
+    <p-button
+      variant="text"
+      severity="secondary"
+      class="flex items-center gap-2 p-0"
+      [rounded]="true"
+      (onClick)="toggle($event)"
+    >
+      <p-avatar
+        image="/images/user.svg"
+        shape="circle"
+        [style]="{ height: '24px', width: '24px' }"
+      />
+    </p-button>
+    <p-popover #op>
+      <div class="flex flex-col gap-2">
+        @if (user$(); as user) {
+        <div class="gap-1">
+          <span class="text-sm font-medium block mb-1">{{ user.fullName }}</span>
+          <div class="text-xs text-surface-500 dark:text-surface-400">{{ user.role }}</div>
+        </div>
+        }
+        <ul class="list-none p-0 m-0 flex flex-col">
+          <li
+            class="flex items-center gap-2 p-2 hover:bg-gray-50 cursor-pointer rounded-border"
+            (click)="logout()"
+          >
+            <i class="pi pi-sign-out"></i>
+            <span class="text-sm">Logout</span>
+          </li>
+        </ul>
+      </div>
+    </p-popover>
+  </ng-template>
+</p-toolbar>
+<div class="flex p-4 justify-center">
+  <router-outlet />
+</div>
