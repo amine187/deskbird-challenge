@@ -1,0 +1,61 @@
+<div class="flex justify-center items-center h-dvh">
+  <p-toast></p-toast>
+  <p-card class="card justify-center max-w-70">
+    <div class="flex flex-col justify-center gap-4">
+      <img src="/images/logo.svg" alt="Logo" class="h-5" />
+      <div class="flex w-full justify-center">
+        <p class="text-lg font-medium">Login</p>
+      </div>
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-2 w-full sm:w-56"
+      >
+        <div class="flex flex-col gap-1">
+          <input
+            pInputText
+            type="email"
+            id="email"
+            placeholder="example@domain.com"
+            formControlName="email"
+            [invalid]="isInvalidFormControl('email')"
+          />
+          @if (isInvalidFormControl('email')) { @if (f['email']?.errors?.['required']) {
+          <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+          } @if (f['email']?.errors?.['email']) {
+          <p-message severity="error" size="small" variant="simple"
+            >Please enter a valid email.</p-message
+          >
+          } }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <p-password
+            id="password"
+            placeholder="Password"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+          ></p-password>
+          @if (isInvalidFormControl('password')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Password is required.</p-message
+          >
+          }
+        </div>
+
+        <p-divider></p-divider>
+
+        <button
+          pButton
+          severity="secondary"
+          type="submit"
+          [loading]="isLoading()"
+          [disabled]="isLoading()"
+        >
+          <span pButtonLabel>Submit</span>
+        </button>
+      </form>
+    </div>
+  </p-card>
+</div>
