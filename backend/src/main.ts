@@ -7,7 +7,7 @@ async function bootstrap() {
   const whiteList = [
     'http://localhost:4200',
     'http://127.0.0.1:4200',
-    'https://frontend-proud-moon-5284.fly.dev/',
+    'https://frontend-proud-moon-5284.fly.dev',
   ];
 
   app.enableCors({
