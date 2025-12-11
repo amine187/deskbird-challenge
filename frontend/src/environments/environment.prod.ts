@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://backend-fragrant-cherry-723.fly.dev',
+  apiUrl: 'https://backend-deskbird-challenge-723.fly.dev',
 };
